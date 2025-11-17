@@ -1,0 +1,76 @@
+﻿@model VotingApp.Models.VoteViewModel
+@{
+    ViewData["Title"] = "GitHub Copilot Voting";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">How excited are you about the future of GitHub Copilot?</h2>
+            
+            @if (!Model.HasVoted)
+            {
+                <form method="post" asp-action="Vote" asp-controller="Home">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="selectedOption" id="option1" value="Absolutely, yes!" required>
+                                    <label class="form-check-label" for="option1">
+                                        Absolutely, yes!
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="selectedOption" id="option2" value="Not really" required>
+                                    <label class="form-check-label" for="option2">
+                                        Not really
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="selectedOption" id="option3" value="Maybe, still exploring" required>
+                                    <label class="form-check-label" for="option3">
+                                        Maybe, still exploring
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Submit Vote</button>
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">Thank you for voting!</h4>
+                    <p>You have already submitted your vote. Here are the current results:</p>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4>Vote Results</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Option</th>
+                                    <th>Votes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var vote in Model.VoteCounts)
+                                {
+                                    <tr>
+                                        <td>@vote.Key</td>
+                                        <td><strong>@vote.Value</strong></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
