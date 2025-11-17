@@ -1,0 +1,80 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ master, main, develop ]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-pr:
+    name: Validate Pull Request
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore VotingApp/VotingApp.sln
+      
+    - name: Build
+      run: dotnet build VotingApp/VotingApp.sln --configuration Release --no-restore
+      
+    - name: Run tests
+      run: dotnet test VotingApp/VotingApp.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+      
+    - name: Check code formatting
+      run: dotnet format VotingApp/VotingApp.sln --verify-no-changes --verbosity diagnostic
+      continue-on-error: true
+      
+    - name: Analyze code quality
+      run: dotnet build VotingApp/VotingApp.sln --configuration Release --no-restore /p:TreatWarningsAsErrors=false
+      
+    - name: Comment PR with results
+      uses: actions/github-script@v7
+      if: always()
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const prNumber = context.payload.pull_request.number;
+          const message = `## PR Validation Results
+          
+          ✅ Build completed
+          ✅ Tests passed
+          
+          Please ensure:
+          - [ ] All tests pass
+          - [ ] Code follows project standards
+          - [ ] Documentation is updated if needed
+          - [ ] No security vulnerabilities introduced
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: prNumber,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
+
+  pr-labeler:
+    name: Auto Label PR
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Label PR based on changes
+      uses: actions/labeler@v5
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}

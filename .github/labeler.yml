@@ -1,0 +1,64 @@
+# Configuration for PR auto-labeling
+# See https://github.com/actions/labeler
+
+# Label PRs that modify controllers
+'controller':
+  - changed-files:
+    - any-glob-to-any-file: 'VotingApp/VotingApp/Controllers/**/*'
+
+# Label PRs that modify models
+'model':
+  - changed-files:
+    - any-glob-to-any-file: 'VotingApp/VotingApp/Models/**/*'
+
+# Label PRs that modify views
+'view':
+  - changed-files:
+    - any-glob-to-any-file: 'VotingApp/VotingApp/Views/**/*'
+
+# Label PRs that modify services
+'service':
+  - changed-files:
+    - any-glob-to-any-file: 'VotingApp/VotingApp/Services/**/*'
+
+# Label PRs that modify tests
+'tests':
+  - changed-files:
+    - any-glob-to-any-file: 'VotingApp/VotingApp.Tests/**/*'
+
+# Label PRs that modify workflows
+'ci/cd':
+  - changed-files:
+    - any-glob-to-any-file: '.github/workflows/**/*'
+
+# Label PRs that modify configuration files
+'configuration':
+  - changed-files:
+    - any-glob-to-any-file: 
+      - '**/*.json'
+      - '**/*.config'
+      - '**/*.csproj'
+      - '**/*.sln'
+
+# Label PRs that modify documentation
+'documentation':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.md'
+      - 'docs/**/*'
+
+# Label PRs that modify frontend assets
+'frontend':
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'VotingApp/VotingApp/wwwroot/**/*'
+      - '**/*.css'
+      - '**/*.js'
+      - '**/*.cshtml'
+
+# Label for dependencies updates
+'dependencies':
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/packages.lock.json'
+      - '**/*.csproj'
